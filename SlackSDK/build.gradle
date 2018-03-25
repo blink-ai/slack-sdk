@@ -1,0 +1,120 @@
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.11'
+}
+
+apply plugin: 'java'
+apply plugin: 'signing'
+apply plugin: 'io.codearte.nexus-staging'
+apply plugin: 'maven'
+
+version '0.0.2-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+lombok {
+    version = "1.16.20"
+    sha256 = "c5178b18caaa1a15e17b99ba5e4023d2de2ebc18b58cde0f5a04ca4b31c10e6d"
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+}
+
+dependencies {
+    compile 'com.google.code.gson:gson:2.8.2'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+import io.franzbecker.gradle.lombok.task.DelombokTask
+
+task delombok(type: DelombokTask, dependsOn: compileJava) {
+    ext.outputDir = file("$buildDir/delombok")
+    outputs.dir(outputDir)
+    sourceSets.main.java.srcDirs.each {
+        inputs.dir(it)
+        args(it, "-d", outputDir)
+    }
+}
+
+javadoc {
+    dependsOn delombok
+    source = delombok.outputDir
+    failOnError = false
+}
+
+task sourcesJar(type: Jar, dependsOn: delombok) {
+    classifier = 'sources'
+    // Using delomboked as a source
+    from delombok.outputDir
+}
+
+javadoc {
+    dependsOn delombok
+    source = delombok.outputDir
+    failOnError = false
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+nexusStaging {
+    packageGroup = "com.github.blink-ai"
+}
+
+signing {
+    required { !version.endsWith("SNAPSHOT") }
+    sign configurations.archives
+}
+
+def sonatypeUsername = System.env['SONATYPE_USERNAME']
+def sonatypePassword = System.env['SONATYPE_PASSWORD']
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+            snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            pom.setArtifactId 'slack-sdk'
+
+            pom.project {
+                name 'slack-sdk'
+                groupId = 'com.github.blink-ai'
+                version = "${version}"
+                description 'Slack Webhook SDK allows sending messages to Slack.'
+
+                url 'https://github.com/blink-ai/slack-sdk'
+
+                scm {
+                    url 'scm:git@github.com:blink-ai/slack-sdk.git'
+                    connection 'scm:git@github.com:blink-ai/slack-sdk.git'
+                    developerConnection 'scm:git@github.com:blink-ai/slack-sdk.git'
+                }
+
+                developers {
+                    developer {
+                        id 'devs'
+                        name 'Jay Patel'
+                    }
+                }
+
+                licenses {
+                    license {
+                        name 'MIT'
+                        url 'http://opensource.org/licenses/MIT'
+                        distribution 'repo'
+                    }
+                }
+            }
+        }
+    }
+}
