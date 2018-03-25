@@ -1,7 +1,8 @@
 package com.blinkai.slack;
 
-import static com.blinkai.slack.SlackMarkdownType.FIELDS;
-import static com.blinkai.slack.SlackMarkdownType.TEXT;
+import static com.blinkai.slack.SlackAttachment.MarkdownType.FIELDS;
+import static com.blinkai.slack.SlackAttachment.MarkdownType.PRETEXT;
+import static com.blinkai.slack.SlackAttachment.MarkdownType.TEXT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -66,6 +67,20 @@ public class SlackAttachmentTest {
   }
 
   @Test
+  public void addAction_addsAction() {
+    SlackAttachment attachment = new SlackAttachment();
+    SlackAction action = new SlackAction();
+
+    assertNull(attachment.actions());
+
+    attachment.addAction(action);
+
+    assertNotNull(attachment.actions());
+    assertEquals(1, attachment.actions().size());
+    assertEquals(action, attachment.actions().get(0));
+  }
+
+  @Test
   public void addMarkdownIn_addsMarkdownIn() {
     SlackAttachment attachment = new SlackAttachment();
 
@@ -82,11 +97,11 @@ public class SlackAttachmentTest {
   public void gson_serializesCorrectly() {
     SlackAttachment attachment = new SlackAttachment()
         .addMarkdownIn(TEXT)
-        .addMarkdownIn(FIELDS);
+        .addMarkdownIn(FIELDS)
+        .addMarkdownIn(PRETEXT);
 
     Slack slack = Slack.builder("https://localhost").build();
 
-    assertEquals("{\"mrkdwn_in\":[\"text\",\"fields\"]}", slack.getGson().toJson(attachment));
+    assertEquals("{\"mrkdwn_in\":[\"text\",\"fields\",\"pretext\"]}", slack.getGson().toJson(attachment));
   }
-
 }

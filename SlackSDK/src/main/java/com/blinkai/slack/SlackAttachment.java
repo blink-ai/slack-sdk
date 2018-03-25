@@ -25,9 +25,10 @@ public class SlackAttachment {
   private String thumbUrl;
   private String footer;
   private String footerIcon;
+  private List<SlackAction> actions;
 
   @SerializedName("mrkdwn_in")
-  private List<SlackMarkdownType> markdownIn;
+  private List<MarkdownType> markdownIn;
 
   @SerializedName("ts")
   private Long timestamp;
@@ -45,12 +46,32 @@ public class SlackAttachment {
     return this;
   }
 
-  public SlackAttachment addMarkdownIn(SlackMarkdownType markdownType) {
+  public SlackAttachment addAction(SlackAction action) {
+    if (actions == null) {
+      actions = new ArrayList<>();
+    }
+    actions.add(action);
+    return this;
+  }
+
+  public SlackAttachment addMarkdownIn(MarkdownType markdownType) {
     if (markdownIn == null) {
       markdownIn = new ArrayList<>();
     }
 
     markdownIn.add(markdownType);
     return this;
+  }
+
+  public enum MarkdownType {
+
+    @SerializedName("pretext")
+    PRETEXT,
+
+    @SerializedName("text")
+    TEXT,
+
+    @SerializedName("fields")
+    FIELDS;
   }
 }
