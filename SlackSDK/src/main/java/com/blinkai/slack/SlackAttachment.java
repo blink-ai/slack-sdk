@@ -26,6 +26,9 @@ public class SlackAttachment {
   private String footer;
   private String footerIcon;
 
+  @SerializedName("mrkdwn_in")
+  private List<SlackMarkdownType> markdownIn;
+
   @SerializedName("ts")
   private Long timestamp;
 
@@ -39,6 +42,15 @@ public class SlackAttachment {
       fields = new ArrayList<>();
     }
     fields.add(field);
+    return this;
+  }
+
+  public SlackAttachment addMarkdownIn(SlackMarkdownType markdownType) {
+    if (markdownIn == null) {
+      markdownIn = new ArrayList<>();
+    }
+
+    markdownIn.add(markdownType);
     return this;
   }
 }
