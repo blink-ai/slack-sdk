@@ -18,7 +18,7 @@ To use the latest build from the `master` branch use:
 
  ```gradle
 dependencies {
-    compile 'com.blink-ai:slack-sdk:0.0.2-SNAPSHOT'
+    compile 'com.blink-ai:slack-sdk:0.0.3-SNAPSHOT'
 }
 ```
 
