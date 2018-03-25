@@ -10,15 +10,23 @@ Add the dependency in your `build.gradle`:
 
 ```gradle
 dependencies {
-    compile 'com.blink-ai:slack-sdk:0.0.2'
+    compile 'com.github.blink-ai:slack-sdk:0.0.2'
 }
+```
+OR
+```xml
+<dependency>
+  <groupId>com.github.blink-ai</groupId>
+  <artifactId>slack-sdk</artifactId>
+  <version>0.0.2</version>
+</dependency>
 ```
 
 To use the latest build from the `master` branch use:
 
  ```gradle
 dependencies {
-    compile 'com.blink-ai:slack-sdk:0.0.3-SNAPSHOT'
+    compile 'com.github.blink-ai:slack-sdk:latest.integration'
 }
 ```
 
