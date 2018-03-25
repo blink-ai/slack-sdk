@@ -10,7 +10,7 @@ Add the dependency in your `build.gradle`:
 
 ```gradle
 dependencies {
-    compile 'com.blink-ai:slack-sdk:0.0.1'
+    compile 'com.blink-ai:slack-sdk:0.0.2'
 }
 ```
 
