@@ -50,6 +50,12 @@ task sourcesJar(type: Jar, dependsOn: delombok) {
     from delombok.outputDir
 }
 
+task javadocJar(type: Jar, dependsOn: delombok) {
+    classifier = 'javadoc'
+    // Using delomboked as a source
+    from delombok.outputDir
+}
+
 javadoc {
     dependsOn delombok
     source = delombok.outputDir
@@ -57,7 +63,7 @@ javadoc {
 }
 
 artifacts {
-    archives sourcesJar
+    archives sourcesJar, javadocJar
 }
 
 nexusStaging {
